@@ -9,6 +9,7 @@ import player.list.List;
 public class GameBoard {
     private int playerColor;
     
+    
     private List playerMoves, oppMoves;
     
     public GameBoard(int playerColor) {
