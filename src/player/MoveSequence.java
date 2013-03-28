@@ -11,7 +11,7 @@ public class MoveSequence{
 	private GameBoard game;
 	private int side;
 	private final int BLACK = 0;
-	private final int WHITE = 1;
+	private final int WHITE = 1 ;
 
 	MoveSequence(GameBoard current){
 		game = current;
