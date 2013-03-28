@@ -32,7 +32,6 @@ public class GameTree {
 		Best myBest = new Best();
 		Best reply = new Best(); 
 		
-		SimpleBoard simp = getBoard(game);
 		HashTableChained hash = new HashTableChained();
 		
 		int eval = evalFunction(game);
@@ -46,6 +45,7 @@ public class GameTree {
 				return reply;
 			}
 		}
+		
 		if(side == playerColor){
 			myBest.score = alpha;
 		}else{
@@ -58,23 +58,30 @@ public class GameTree {
 		for(int i = 0; i < legal.length(); i++){
 			if (Depth == -1){
 				long start = System.currentTimeMillis();
-				long end = start + 5*1000; // 60 seconds * 1000 ms/sec
+				long end = start + 5*1000; // 5 seconds * 1000 ms/sec
 				while (System.currentTimeMillis() < end){
 				    game.addMove((Move)m.item());
-				    hash.insert(simp.hashCode(), evalFunction(game));
-				    reply = chooseMove(game, oppColor(game), alpha, beta);
-				    game.removeMove((Move)m.item());                  //create remove move method in gameboard class
-				    if(side == playerColor && (reply.score >= myBest.score)){
-				    	myBest.move = (Move)m.item();
-				    	myBest.score = reply.score;
-				    	alpha = (int) reply.score;
-				    }else if (side == oppColor(game) && (reply.score <= myBest.score)){
-				    	myBest.move = (Move)m.item();
-				    	myBest.score = reply.score;
-				    	beta = (int) reply.score;
-				    }
-				    if(alpha >= beta){
-				    	return myBest;
+				    SimpleBoard simp = getBoard(game);
+				    if(hash.find(simp.hashCode()) != null){   //if this board is a board already seen. 
+				    	int j = (Integer) hash.find(simp.hashCode()).value(); //this gets the eval score
+				    	
+				    }else{
+				    	hash.insert(simp.hashCode(), evalFunction(game));
+				    	reply = chooseMove(game, oppColor(game), alpha, beta);
+				    	game.removeMove((Move)m.item());                 //create remove move method in gameboard class
+				    	
+				    	if(side == playerColor && (reply.score >= myBest.score)){
+				    		myBest.move = (Move)m.item();
+				    		myBest.score = reply.score;
+				    		alpha = (int) reply.score;
+				    	}else if (side == oppColor(game) && (reply.score <= myBest.score)){
+				    		myBest.move = (Move)m.item();
+				    		myBest.score = reply.score;
+				    		beta = (int) reply.score;
+				    	}
+				    	if(alpha >= beta){
+				    		return myBest;
+				    	}
 				    }
 				}
 			}
@@ -358,7 +365,7 @@ public class GameTree {
     	}
     	return difference; 
     }catch(InvalidNodeException ee){}
-    	return 0; 
+       return 0; 
     }
     
     
