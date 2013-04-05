@@ -38,6 +38,8 @@ Does your MachinePlayer use any special method of choosing the first few moves?
 
 
 Is there anything else the graders should know to help them read your project?
+We made a List class in the player.list package to help implement some of the methods.
+It holds type objects. 
 
 
 
@@ -65,64 +67,182 @@ grade.
 
 Modules:
 
-    1. Determining whether a move is valid
+    1. Determining whether a move is valid (Paymon)
         See MoveHelper class - isValid() function
     
-    2. Finding the best move/ performing minimax tree search
+    2. Finding the best move/ performing minimax tree search (Dana)
         See GameTree class - chooseMove() function
     
-    3. Generating a list of legal moves
+    3. Generating a list of legal moves (Dana)
         See GameTree class - getLegalMoves() function
 
-    4. Determining whether there is a network
+    4. Determining whether there is a network (Paymon)
         See the isNetwork() in the MoveSequence class
 
-    5. Finding chips that form connections
+    5. Finding chips that form connections (Paymon)
         MoveSequence class and getMoveSequence()
 
 Classes:
 
 MoveHelper (singleton class) (Paymon)
 
-	// returns if this is a valid move 
-	public static boolean isValid(Move m)
+    /**
+     * Creates an instance of MoveHelper()
+     * @return returns that instance
+     */
+    public static MoveHelper getInstance()
 
-	// constructs the MoveSequence that m is in
-	public static MoveSequence getMoveSequence(Move m)
+    /**
+     * Gets the Move sequence of Move m 
+     * @param m The move to get the move sequence of
+     * @return an instance of the move sequence
+     */
+    public static MoveSequence getMoveSequence(Move m)
+
+    /**
+     * Method that tells you if the Move is valid.
+     * @param m The move to be checked
+     * @return boolean true
+     */
+    public static boolean isValid(Move m)
 
 	
-MoveSequence extends List (Dana) 
+MoveSequence extends List (Paymon) 
 
-	// creates a MoveSequence starting with start
-	public MoveSequence(Move start) 
+    /**
+     * This is a constructor for the Move Sequence class. 
+     * @param playerColor sets the player color 
+     **/
+    public MoveSequence(int playerColor)
 
-	// returns true if the m is successfully added
-	// overrides add(Move m) from List
-	public boolean add(Move m)
-
-	// returns true if this MoveSequence is a network
-	public boolean isNetwork()
+     /**
+     * Gets the player's color of the current Board.
+     **/
+    public int getColor()
+    
+     /**
+     * evaluates a MoveSequence based on:
+     *  - the length of the sequence
+     *  - whether or not it is a network
+     * @return int returns the evaluation score.
+     */
+    public int evaluate()
+    
+     /**
+     * Checks if the Board has a network.
+     * @return boolean Returns false if there is no network and returns true if there is. 
+     **/
+    public boolean isNetwork()
 
 
 GameBoard (Paymon)
-
-	// the color of the player that owns this board
-	private int playerColor
-	
 	// hold lists of the current moves of each player
-	private List<Move> playerMoves, oppMoves;
-
-	// creates the game board
-	public GameBoard(List<Move> playerMoves, List<Move> oppMoves, int playerColor)
+	protected List<Move> playerMoves, oppMoves;
 	
-	// adds a move under the current player's color
-	public Move addMove(Move m)
+    /**
+     * This is a constructor of the GameBoard class which stores an empty list of the current player's moves 
+     * and the opponent player's moves.
+     * @param playerColor This is the player's Color
+     **/
+    public GameBoard(int playerColor)
 
-	// adds an opponent's move
-	public Move addOpponentMove(Move m)
+
+    /**
+     * This is also a constructor for the GameBoard clss. It creates an 8*8 board then adds the moves to the corresponding list.
+     * Creates a board where the current player and the opponent player has made some moves already.
+     * @param pMove Current player's moves.
+     * @param oMove Opponent player's moves.
+     * @param playerColor the current player's color.
+     **/
+    public GameBoard(List<Move> pMove, List<Move> oMove, int playerColor)
 	
-	// calculate the current score of this board
-	public int evaluate()
+    /** 
+     * This method checks if the current player's Move is being put in the right place in the edges of the board.
+     * The black player can only put moves where y = 0 or 7, and white player can only put moves where x = 0 or 7.
+     * @param m The Move with the x and y coordinates.
+     * @retun boolean Returns whether the Moves is in it's own edge or not.
+     * */
+    public boolean isEdgeMove(Move m)
+    
+     /**
+     * Adds a move to playerMoves
+     * If the move already has been played, 
+     * then it will not be added
+     * returns true if the m is succesfully added
+     *@param m The Move it's going to add the player's list
+     *@return boolean Returns true if Move m has been added and returns false otherwise
+     **/
+    public boolean addMove(Move m)
+    
+     /**
+     * see addMove() 
+     * same as that, except for the opponent
+     * @param m The Move your going to add to the opponent's list.
+     * @return boolean Alse returns true if the Move has been added successfully and false otherwise
+     **/
+    public boolean addOpponentMove(Move m)
+    
+     /**
+     * removes a move made by the current player
+     * @param m - the move to remove
+     */
+    public void removeMove(Move m)
+    
+     /**
+     * removes a move made by the opponent player
+     * @param m - the move to remove
+     */
+    public void removeOppMove(Move m)
+
+    /**
+     * constructs and returns a List 
+     * with the different MoveSequences that m is in
+     * m MUST be an edge move
+     * @param m The list is constructed based on this move given.
+     * @return List Returns a list of all the MoveSequences made.
+     */
+    public List<MoveSequence> getMoveSequences(Move m)
+    
+     /**
+     * This method gets a List of all the networks that Move m can make with chips with the same color.
+     * Checks for all the Moves in the GameBoard with the same chip color, make sure nothing gets in the way 
+     * of making the network, checks if it goes diagonally or horizontally, and if all the invariants are
+     * satisfied, it stores that other move in a list and returns it. 
+     * @param m The main Move where your trying to find the neighbors of. 
+     * @param pColor the color of the chips. 
+     * @return List Returns a List of all the neighbors of Move m
+     */
+    public List<Move> getNeighbors(Move m, int pColor)
+    
+     /**
+     * A method that checks if the grid is occupied. 
+     * @param x, y The place of the grid
+     * @return boolean Returns true if the cell at x, y is occupied and false otherwise. 
+     */
+    public boolean isOccupied(int x, int y)
+    
+     /**
+     * evaluate the grid, giving it a score 
+     * on how good the next move is.
+     * If a current player has a network it returns 10000000, and -10000000 if the opponent has a network.
+     * @return int This is the evaluation score of the GameBoard. 
+     */
+    public int evaluate()
+    
+     /**
+     * normally this would be implemented as the equals() method in Move,
+     * however we are not allowed to edit the Move class
+     * 
+     * @param m1 - the first move to be compared 
+     * @param m2 - the second move to be compared
+     */
+    public boolean movesEqual(Move m1, Move m2)
+    
+  /**
+     * This Method checks if the Grid is full, meaning both current player and opponent player has each made ten moves.
+     * @return true if the grid is full and false other wise. 
+     */
+    public boolean isFullGrid()
 
 
 MachinePlayer (Paymon)
@@ -136,9 +256,21 @@ GameTree (Dana)
 	private GameBoard currentBoard
 	private int searchDepth
 	
-	public BestMove chooseMove(boolean side, int alpha, int beta)
-
-        public List<Move> getLegalMoves()        
+	/**
+    * A Constructor for the GamreTree class.
+    * @param g The GameBoard to be used. 
+    * @param Depth The Specified depth.
+    */
+    public GameTree(GameBoard g, int Depth)
+	
+	/**
+    * This is where the alpha beta algorithm happens. chooseMove should return the BestMove with a move variable.
+    * @param side, white or black
+    * @param alpha, your score
+    * @param beta, opponent's score
+    * @return, returns the BestMove. (Type Move, BestMove has fields move and score)
+    */
+    public Best chooseMove(boolean side, int alpha, int beta)       
 
 
 BestMove (Dana)
